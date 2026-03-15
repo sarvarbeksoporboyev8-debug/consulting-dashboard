@@ -58,6 +58,11 @@ async function checkFileSha(path) {
   } catch { return null; }
 }
 
+async function listDir(path) {
+  const data = await apiRequest(path);
+  return Array.isArray(data) ? data : [];
+}
+
 // ====================================================
 // NAVIGATION
 // ====================================================
@@ -186,10 +191,13 @@ async function loadBlog() {
   try {
     const { content } = await readJSON('src/_data/blog.json');
     const posts = content.en || [];
+    const archived = content._archived || [];
+
+    let html = '';
     if (!posts.length) {
-      el.innerHTML = '<p class="muted">No posts yet.</p>';
+      html += '<p class="muted">No posts yet.</p>';
     } else {
-      el.innerHTML = posts.map(p => `
+      html += posts.map((p, i) => `
         <div class="list-item">
           <div class="list-item-info">
             <strong>${esc(p.title)}</strong>
@@ -197,9 +205,31 @@ async function loadBlog() {
           </div>
           <div class="list-item-actions">
             <a href="https://grant-consulting.uz/en/${esc(p.link)}" target="_blank" class="btn-sm">View ↗</a>
+            ${p.cmsPost ? `<button class="btn-sm btn-danger" onclick="archiveBlogPost(${i})">Archive</button>` : ''}
           </div>
         </div>`).join('');
     }
+
+    if (archived.length) {
+      html += `<div class="archived-section">
+        <h3 class="archived-title">Archived — ${archived.length} hidden post${archived.length !== 1 ? 's' : ''}</h3>
+        <p class="form-hint">These posts are hidden from the blog listing but the pages still exist. Press ↩ to restore.</p>
+        ${archived.map((entry, i) => {
+          const p = entry.en || Object.values(entry)[0];
+          return `<div class="list-item list-item--archived">
+            <div class="list-item-info">
+              <strong>${esc(p.title)}</strong>
+              <span class="meta">${esc(p.date)}</span>
+            </div>
+            <div class="list-item-actions">
+              <button class="btn-sm btn-restore-sm" onclick="restoreBlogPost(${i})">↩ Restore</button>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>`;
+    }
+
+    el.innerHTML = html;
   } catch (e) {
     el.innerHTML = `<p class="error-msg">Error: ${esc(e.message)}</p>`;
   }
@@ -377,7 +407,8 @@ async function publishPost() {
         date: newPost[lang].date,
         datetime,
         link: `blog-${slug}.html`,
-        image: imageFilename
+        image: imageFilename,
+        cmsPost: true
       });
     });
     await writeJSON('src/_data/blog.json', blogData, blogSha, `Blog listing: ${enTitle}`);
@@ -399,6 +430,39 @@ async function publishPost() {
     setStatus('post-status', `Error: ${esc(err.message)}`, 'error');
   }
   btn.disabled = false;
+}
+
+async function archiveBlogPost(index) {
+  if (!confirm('Archive this post? It will be hidden from the blog listing but can be restored.')) return;
+  try {
+    const { content: blogData, sha } = await readJSON('src/_data/blog.json');
+    const entry = {};
+    LANGS.forEach(lang => {
+      if (blogData[lang]) { entry[lang] = blogData[lang].splice(index, 1)[0]; }
+    });
+    if (!blogData._archived) blogData._archived = [];
+    blogData._archived.push(entry);
+    await writeJSON('src/_data/blog.json', blogData, sha, `Archive blog post`);
+    await loadBlog();
+  } catch (err) {
+    alert(`Error: ${err.message}`);
+  }
+}
+
+async function restoreBlogPost(index) {
+  if (!confirm('Restore this post to the blog listing?')) return;
+  try {
+    const { content: blogData, sha } = await readJSON('src/_data/blog.json');
+    const entry = blogData._archived.splice(index, 1)[0];
+    LANGS.forEach(lang => {
+      if (!blogData[lang]) blogData[lang] = [];
+      if (entry[lang]) blogData[lang].push(entry[lang]);
+    });
+    await writeJSON('src/_data/blog.json', blogData, sha, `Restore blog post`);
+    await loadBlog();
+  } catch (err) {
+    alert(`Error: ${err.message}`);
+  }
 }
 
 // Section builder
@@ -438,20 +502,44 @@ async function loadEvents() {
   try {
     const { content } = await readJSON('src/_data/events.json');
     const items = content.en || [];
+    const archived = content._archived || [];
+
+    let html = '';
     if (!items.length) {
-      el.innerHTML = '<p class="muted">No events yet. Use the form above to add one.</p>';
+      html += '<p class="muted">No events yet. Use the form above to add one.</p>';
     } else {
-      el.innerHTML = items.map((ev, i) => `
+      html += items.map((ev, i) => `
         <div class="list-item">
           <div class="list-item-info">
             <strong>${esc(ev.title)}</strong>
             <span class="meta">${esc(ev.date)} · ${esc(ev.location)}</span>
           </div>
           <div class="list-item-actions">
-            <button class="btn-sm btn-danger" onclick="deleteEvent(${i})">Delete</button>
+            <button class="btn-sm btn-danger" onclick="deleteEvent(${i})">Archive</button>
           </div>
         </div>`).join('');
     }
+
+    if (archived.length) {
+      html += `<div class="archived-section">
+        <h3 class="archived-title">Archived — ${archived.length} hidden event${archived.length !== 1 ? 's' : ''}</h3>
+        <p class="form-hint">These events are hidden from the site. Press ↩ to restore.</p>
+        ${archived.map((entry, i) => {
+          const ev = entry.en || Object.values(entry)[0];
+          return `<div class="list-item list-item--archived">
+            <div class="list-item-info">
+              <strong>${esc(ev.title)}</strong>
+              <span class="meta">${esc(ev.date)} · ${esc(ev.location)}</span>
+            </div>
+            <div class="list-item-actions">
+              <button class="btn-sm btn-restore-sm" onclick="restoreEvent(${i})">↩ Restore</button>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>`;
+    }
+
+    el.innerHTML = html;
   } catch (e) {
     el.innerHTML = `<p class="error-msg">Error: ${esc(e.message)}</p>`;
   }
@@ -496,11 +584,32 @@ document.getElementById('event-form').addEventListener('submit', async function(
 });
 
 async function deleteEvent(index) {
-  if (!confirm('Delete this event from all languages?')) return;
+  if (!confirm('Archive this event? It will be hidden from the site but can be restored.')) return;
   try {
     const { content: evData, sha } = await readJSON('src/_data/events.json');
-    LANGS.forEach(lang => { if (evData[lang]) evData[lang].splice(index, 1); });
-    await writeJSON('src/_data/events.json', evData, sha, 'Delete event');
+    const entry = {};
+    LANGS.forEach(lang => {
+      if (evData[lang]) { entry[lang] = evData[lang].splice(index, 1)[0]; }
+    });
+    if (!evData._archived) evData._archived = [];
+    evData._archived.push(entry);
+    await writeJSON('src/_data/events.json', evData, sha, 'Archive event');
+    await loadEvents();
+  } catch (err) {
+    alert(`Error: ${err.message}`);
+  }
+}
+
+async function restoreEvent(index) {
+  if (!confirm('Restore this event to the site?')) return;
+  try {
+    const { content: evData, sha } = await readJSON('src/_data/events.json');
+    const entry = evData._archived.splice(index, 1)[0];
+    LANGS.forEach(lang => {
+      if (!evData[lang]) evData[lang] = [];
+      if (entry[lang]) evData[lang].push(entry[lang]);
+    });
+    await writeJSON('src/_data/events.json', evData, sha, 'Restore event');
     await loadEvents();
   } catch (err) {
     alert(`Error: ${err.message}`);
@@ -515,20 +624,59 @@ async function loadGallery() {
   const el = document.getElementById('gallery-list');
   el.innerHTML = '<p class="loading">Loading…</p>';
   try {
-    const { content } = await readJSON('src/_data/gallery.json');
+    const [{ content }, dirFiles] = await Promise.all([
+      readJSON('src/_data/gallery.json'),
+      listDir('src/img/gallery')
+    ]);
+
+    const MEDIA_EXTS = new Set(['jpg','jpeg','png','gif','webp','avif','mp4','webm','mov']);
+    const VIDEO_EXTS = new Set(['mp4','webm','mov']);
+
+    const activeNames = new Set(content.map(item => item.file));
+    const archived = dirFiles.filter(f => {
+      if (f.type !== 'file') return false;
+      const ext = f.name.split('.').pop().toLowerCase();
+      return MEDIA_EXTS.has(ext) && !activeNames.has(f.name);
+    });
+
+    const thumbUrl = name =>
+      `https://raw.githubusercontent.com/sarvarbeksoporboyev8-debug/consulting-website/main/src/img/gallery/${esc(name)}`;
+
+    let html = '';
+
     if (!content.length) {
-      el.innerHTML = '<p class="muted">Gallery is empty.</p>';
+      html += '<p class="muted">Gallery is empty.</p>';
     } else {
-      el.innerHTML = `<div class="gallery-admin-grid">${content.map((item, i) => `
+      html += `<div class="gallery-admin-grid">${content.map((item, i) => `
         <div class="gallery-admin-item">
           ${item.type === 'video'
             ? `<div class="video-thumb">▶<br>${esc(item.file)}</div>`
-            : `<img src="https://raw.githubusercontent.com/sarvarbeksoporboyev8-debug/consulting-website/main/src/img/gallery/${esc(item.file)}" alt="" loading="lazy" onerror="this.style.display='none'">`
+            : `<img src="${thumbUrl(item.file)}" alt="" loading="lazy" onerror="this.style.display='none'">`
           }
           <div class="gallery-admin-label">${esc(item.file)}</div>
-          <button class="btn-del" onclick="deleteGalleryItem(${i})" title="Remove">✕</button>
+          <button class="btn-del" onclick="deleteGalleryItem(${i})" title="Hide from gallery">✕</button>
         </div>`).join('')}</div>`;
     }
+
+    if (archived.length) {
+      html += `<div class="archived-section">
+        <h3 class="archived-title">Archived — ${archived.length} hidden file${archived.length !== 1 ? 's' : ''}</h3>
+        <p class="form-hint">These files are in the repo but not shown on the site. Press ↩ to restore.</p>
+        <div class="gallery-admin-grid">${archived.map(f => {
+          const isVideo = VIDEO_EXTS.has(f.name.split('.').pop().toLowerCase());
+          return `<div class="gallery-admin-item gallery-admin-item--archived">
+            ${isVideo
+              ? `<div class="video-thumb">▶<br>${esc(f.name)}</div>`
+              : `<img src="${thumbUrl(f.name)}" alt="" loading="lazy" onerror="this.style.display='none'">`
+            }
+            <div class="gallery-admin-label">${esc(f.name)}</div>
+            <button class="btn-restore" onclick="restoreGalleryItem('${esc(f.name)}')" title="Restore to gallery">↩</button>
+          </div>`;
+        }).join('')}</div>
+      </div>`;
+    }
+
+    el.innerHTML = html;
   } catch (e) {
     el.innerHTML = `<p class="error-msg">Error: ${esc(e.message)}</p>`;
   }
@@ -568,11 +716,25 @@ document.getElementById('gallery-upload-form').addEventListener('submit', async 
 });
 
 async function deleteGalleryItem(index) {
-  if (!confirm('Remove this item from the gallery display? (File stays in repo)')) return;
+  if (!confirm('Hide this item from the gallery? (File stays in repo and can be restored.)')) return;
   try {
     const { content: galleryData, sha } = await readJSON('src/_data/gallery.json');
     galleryData.splice(index, 1);
-    await writeJSON('src/_data/gallery.json', galleryData, sha, 'Gallery: remove item');
+    await writeJSON('src/_data/gallery.json', galleryData, sha, 'Gallery: hide item');
+    await loadGallery();
+  } catch (err) {
+    alert(`Error: ${err.message}`);
+  }
+}
+
+async function restoreGalleryItem(filename) {
+  if (!confirm(`Restore "${filename}" to the gallery?`)) return;
+  try {
+    const { content: galleryData, sha } = await readJSON('src/_data/gallery.json');
+    const ext = filename.split('.').pop().toLowerCase();
+    const type = ['mp4','webm','mov'].includes(ext) ? 'video' : 'image';
+    galleryData.push({ type, file: filename });
+    await writeJSON('src/_data/gallery.json', galleryData, sha, `Gallery: restore ${filename}`);
     await loadGallery();
   } catch (err) {
     alert(`Error: ${err.message}`);
@@ -589,10 +751,13 @@ async function loadTestimonials() {
   try {
     const { content } = await readJSON('src/_data/testimonials.json');
     const items = content.en || [];
+    const archived = content._archived || [];
+
+    let html = '';
     if (!items.length) {
-      el.innerHTML = '<p class="muted">No testimonials yet.</p>';
+      html += '<p class="muted">No testimonials yet.</p>';
     } else {
-      el.innerHTML = items.map((t, i) => `
+      html += items.map((t, i) => `
         <div class="list-item">
           <div class="list-item-info">
             <strong>${esc(t.name)}</strong>
@@ -600,10 +765,32 @@ async function loadTestimonials() {
             <p class="quote-preview">"${esc(t.quote.substring(0, 100))}${t.quote.length > 100 ? '…' : ''}"</p>
           </div>
           <div class="list-item-actions">
-            <button class="btn-sm btn-danger" onclick="deleteTestimonial(${i})">Delete</button>
+            <button class="btn-sm btn-danger" onclick="deleteTestimonial(${i})">Archive</button>
           </div>
         </div>`).join('');
     }
+
+    if (archived.length) {
+      html += `<div class="archived-section">
+        <h3 class="archived-title">Archived — ${archived.length} hidden testimonial${archived.length !== 1 ? 's' : ''}</h3>
+        <p class="form-hint">These testimonials are hidden from the site. Press ↩ to restore.</p>
+        ${archived.map((entry, i) => {
+          const t = entry.en || Object.values(entry)[0];
+          return `<div class="list-item list-item--archived">
+            <div class="list-item-info">
+              <strong>${esc(t.name)}</strong>
+              <span class="meta">${esc(t.title)}</span>
+              <p class="quote-preview">"${esc(t.quote.substring(0, 80))}${t.quote.length > 80 ? '…' : ''}"</p>
+            </div>
+            <div class="list-item-actions">
+              <button class="btn-sm btn-restore-sm" onclick="restoreTestimonial(${i})">↩ Restore</button>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>`;
+    }
+
+    el.innerHTML = html;
   } catch (e) {
     el.innerHTML = `<p class="error-msg">Error: ${esc(e.message)}</p>`;
   }
@@ -647,11 +834,32 @@ document.getElementById('testimonial-form').addEventListener('submit', async fun
 });
 
 async function deleteTestimonial(index) {
-  if (!confirm('Delete this testimonial from all languages?')) return;
+  if (!confirm('Archive this testimonial? It will be hidden from the site but can be restored.')) return;
   try {
     const { content: testData, sha } = await readJSON('src/_data/testimonials.json');
-    LANGS.forEach(lang => { if (testData[lang]) testData[lang].splice(index, 1); });
-    await writeJSON('src/_data/testimonials.json', testData, sha, 'Delete testimonial');
+    const entry = {};
+    LANGS.forEach(lang => {
+      if (testData[lang]) { entry[lang] = testData[lang].splice(index, 1)[0]; }
+    });
+    if (!testData._archived) testData._archived = [];
+    testData._archived.push(entry);
+    await writeJSON('src/_data/testimonials.json', testData, sha, 'Archive testimonial');
+    await loadTestimonials();
+  } catch (err) {
+    alert(`Error: ${err.message}`);
+  }
+}
+
+async function restoreTestimonial(index) {
+  if (!confirm('Restore this testimonial to the site?')) return;
+  try {
+    const { content: testData, sha } = await readJSON('src/_data/testimonials.json');
+    const entry = testData._archived.splice(index, 1)[0];
+    LANGS.forEach(lang => {
+      if (!testData[lang]) testData[lang] = [];
+      if (entry[lang]) testData[lang].push(entry[lang]);
+    });
+    await writeJSON('src/_data/testimonials.json', testData, sha, 'Restore testimonial');
     await loadTestimonials();
   } catch (err) {
     alert(`Error: ${err.message}`);

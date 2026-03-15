@@ -586,6 +586,22 @@ textarea { resize: vertical; min-height: 88px; line-height: 1.55; }
 
 .list-item-actions { display: flex; gap: 8px; flex-shrink: 0; }
 
+.list-item--archived { opacity: 0.55; }
+.list-item--archived:hover { opacity: 1; }
+
+.btn-restore-sm {
+  background: #edf7f1;
+  border: 1px solid #a8d9bb;
+  color: #1a7a3c;
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 0.8125rem;
+  font-family: var(--font-sans);
+  font-weight: 600;
+}
+.btn-restore-sm:hover { background: #1a7a3c; color: var(--white); border-color: #1a7a3c; }
+
 /* =============================================
    SECTIONS BUILDER
    ============================================= */
@@ -666,6 +682,42 @@ textarea { resize: vertical; min-height: 88px; line-height: 1.55; }
 }
 
 .btn-del:hover { background: #b63a2b; color: var(--white); border-color: #b63a2b; }
+
+.btn-restore {
+  position: absolute;
+  top: 4px; right: 4px;
+  background: rgba(255,255,255,0.9);
+  border: 1px solid #ddd;
+  color: #1a7a3c;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 2px 7px;
+  font-size: 0.75rem;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  line-height: 1.6;
+}
+.btn-restore:hover { background: #1a7a3c; color: var(--white); border-color: #1a7a3c; }
+
+.gallery-admin-item--archived {
+  opacity: 0.6;
+  border-style: dashed;
+}
+.gallery-admin-item--archived:hover { opacity: 1; }
+
+.archived-section {
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+.archived-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 6px;
+}
 
 /* =============================================
    UTILITY
