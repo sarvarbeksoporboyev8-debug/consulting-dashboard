@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grant Consulting — Dashboard</title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <span class="sidebar-logo">GC</span>
+      <span class="sidebar-title">Grant Consulting</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" data-section="overview">
+        <span class="nav-icon">📊</span> Overview
+      </div>
+      <div class="nav-item" data-section="blog">
+        <span class="nav-icon">📝</span> Blog Posts
+      </div>
+      <div class="nav-item" data-section="events">
+        <span class="nav-icon">📅</span> Events
+      </div>
+      <div class="nav-item" data-section="gallery">
+        <span class="nav-icon">🖼️</span> Gallery
+      </div>
+      <div class="nav-item" data-section="testimonials">
+        <span class="nav-icon">💬</span> Testimonials
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="btn-ghost" id="btn-logout" style="width:100%;">Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main-content">
+    <header class="main-header">
+      <h1 id="page-title">Overview</h1>
+      <span style="font-size:0.8125rem;color:var(--muted);">grant-consulting.uz</span>
+    </header>
+
+    <div class="section-body">
+
+      <!-- ═══════════════════════════════════
+           OVERVIEW
+           ═══════════════════════════════════ -->
+      <div id="section-overview" class="section-pane active">
+        <div id="overview-stats"></div>
+        <div class="card" style="margin-top:0;">
+          <div class="card-title">Quick Guide</div>
+          <ul style="color:var(--muted);font-size:0.875rem;line-height:2;padding-left:18px;">
+            <li><strong style="color:var(--text);">Blog Posts</strong> — publish new articles in all 4 languages</li>
+            <li><strong style="color:var(--text);">Events</strong> — add upcoming events shown on the Events page</li>
+            <li><strong style="color:var(--text);">Gallery</strong> — upload photos and videos (max 25 MB each)</li>
+            <li><strong style="color:var(--text);">Testimonials</strong> — manage student success stories</li>
+          </ul>
+          <p style="margin-top:16px;font-size:0.8125rem;color:var(--muted);">After any change, the website rebuilds automatically in ~1 minute via Cloudflare.</p>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════
+           BLOG POSTS
+           ═══════════════════════════════════ -->
+      <div id="section-blog" class="section-pane">
+        <div class="actions-row">
+          <h2 class="section-title" style="margin-bottom:0;">Blog Posts</h2>
+          <button class="btn-accent" id="btn-new-post">+ New Post</button>
+        </div>
+
+        <!-- New post form (hidden by default) -->
+        <div id="post-form-wrap" class="card" style="display:none;">
+          <div class="card-title">New Blog Post</div>
+          <form id="post-form" novalidate>
+
+            <!-- Common fields -->
+            <div class="row">
+              <div class="form-group">
+                <label>Slug (URL) *</label>
+                <input type="text" id="post-slug" placeholder="my-blog-post" required>
+                <small style="color:var(--muted);font-size:0.75rem;">Used in URL: /en/blog-my-blog-post.html</small>
+              </div>
+              <div class="form-group">
+                <label>Author</label>
+                <input type="text" id="post-author" value="Admin">
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group">
+                <label>ISO Date * <small style="font-weight:400;">(for sorting, e.g. 2025-04-10)</small></label>
+                <input type="date" id="post-datetime" required>
+              </div>
+              <div class="form-group">
+                <label>Featured Image</label>
+                <input type="file" id="post-image" accept="image/*">
+              </div>
+            </div>
+
+            <!-- Language tabs -->
+            <div class="lang-tabs" id="blog-lang-tabs">
+              <button type="button" class="lang-tab active" data-group="blog" data-lang="en" onclick="switchTab('blog','en')">EN</button>
+              <button type="button" class="lang-tab" data-group="blog" data-lang="uz" onclick="switchTab('blog','uz')">UZ</button>
+              <button type="button" class="lang-tab" data-group="blog" data-lang="uzcyrl" onclick="switchTab('blog','uzcyrl')">ЎЗ</button>
+              <button type="button" class="lang-tab" data-group="blog" data-lang="ru" onclick="switchTab('blog','ru')">RU</button>
+            </div>
+
+            <!-- EN -->
+            <div class="lang-panel active" data-group="blog" data-lang="en">
+              <div class="form-group"><label>Title *</label><input type="text" id="post-title-en" required></div>
+              <div class="form-group"><label>Excerpt *</label><textarea id="post-excerpt-en" rows="2" required></textarea></div>
+              <div class="form-group"><label>Date Display * <small style="font-weight:400;">(e.g. 10 April, 2025)</small></label><input type="text" id="post-date-en" placeholder="10 April, 2025" required></div>
+              <div class="form-group">
+                <label>Content *</label>
+                <div id="sections-en" class="sections-builder">
+                  <div class="section-item">
+                    <input type="text" class="section-heading" placeholder="Section heading (optional)">
+                    <div class="paragraphs" style="margin-top:8px;">
+                      <textarea class="para-input" placeholder="Write paragraph here…" rows="5"></textarea>
+                      <div class="section-item-actions">
+                        <button type="button" class="btn-sm" onclick="addParagraph(this)">+ Add paragraph</button>
+                      </div>
+                    </div>
+                  </div>
+                  <button type="button" class="btn-sm" onclick="addSection('en')" style="align-self:flex-start;">+ Add section</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- UZ -->
+            <div class="lang-panel" data-group="blog" data-lang="uz">
+              <div class="form-group"><label>Sarlavha *</label><input type="text" id="post-title-uz" required></div>
+              <div class="form-group"><label>Qisqacha *</label><textarea id="post-excerpt-uz" rows="2" required></textarea></div>
+              <div class="form-group"><label>Sana * <small style="font-weight:400;">(masalan, 10 aprel, 2025)</small></label><input type="text" id="post-date-uz" placeholder="10 aprel, 2025" required></div>
+              <div class="form-group">
+                <label>Kontent *</label>
+                <div id="sections-uz" class="sections-builder">
+                  <div class="section-item">
+                    <input type="text" class="section-heading" placeholder="Bo'lim sarlavhasi (ixtiyoriy)">
+                    <div class="paragraphs" style="margin-top:8px;">
+                      <textarea class="para-input" placeholder="Paragraf yozing…" rows="5"></textarea>
+                      <div class="section-item-actions">
+                        <button type="button" class="btn-sm" onclick="addParagraph(this)">+ Paragraf qo'shish</button>
+                      </div>
+                    </div>
+                  </div>
+                  <button type="button" class="btn-sm" onclick="addSection('uz')" style="align-self:flex-start;">+ Bo'lim qo'shish</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- UZ Cyrillic -->
+            <div class="lang-panel" data-group="blog" data-lang="uzcyrl">
+              <div class="form-group"><label>Сарлавҳа *</label><input type="text" id="post-title-uzcyrl" required></div>
+              <div class="form-group"><label>Қисқача *</label><textarea id="post-excerpt-uzcyrl" rows="2" required></textarea></div>
+              <div class="form-group"><label>Сана * <small style="font-weight:400;">(масалан, 10 апрел, 2025)</small></label><input type="text" id="post-date-uzcyrl" placeholder="10 апрел, 2025" required></div>
+              <div class="form-group">
+                <label>Контент *</label>
+                <div id="sections-uzcyrl" class="sections-builder">
+                  <div class="section-item">
+                    <input type="text" class="section-heading" placeholder="Бўлим сарлавҳаси (ихтиёрий)">
+                    <div class="paragraphs" style="margin-top:8px;">
+                      <textarea class="para-input" placeholder="Параграф ёзинг…" rows="5"></textarea>
+                      <div class="section-item-actions">
+                        <button type="button" class="btn-sm" onclick="addParagraph(this)">+ Параграф қўшиш</button>
+                      </div>
+                    </div>
+                  </div>
+                  <button type="button" class="btn-sm" onclick="addSection('uzcyrl')" style="align-self:flex-start;">+ Бўлим қўшиш</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- RU -->
+            <div class="lang-panel" data-group="blog" data-lang="ru">
+              <div class="form-group"><label>Заголовок *</label><input type="text" id="post-title-ru" required></div>
+              <div class="form-group"><label>Краткое описание *</label><textarea id="post-excerpt-ru" rows="2" required></textarea></div>
+              <div class="form-group"><label>Дата * <small style="font-weight:400;">(напр., 10 апреля 2025)</small></label><input type="text" id="post-date-ru" placeholder="10 апреля 2025" required></div>
+              <div class="form-group">
+                <label>Контент *</label>
+                <div id="sections-ru" class="sections-builder">
+                  <div class="section-item">
+                    <input type="text" class="section-heading" placeholder="Заголовок раздела (необязательно)">
+                    <div class="paragraphs" style="margin-top:8px;">
+                      <textarea class="para-input" placeholder="Напишите абзац…" rows="5"></textarea>
+                      <div class="section-item-actions">
+                        <button type="button" class="btn-sm" onclick="addParagraph(this)">+ Добавить абзац</button>
+                      </div>
+                    </div>
+                  </div>
+                  <button type="button" class="btn-sm" onclick="addSection('ru')" style="align-self:flex-start;">+ Добавить раздел</button>
+                </div>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:10px;margin-top:20px;">
+              <button type="submit" class="btn-accent" id="btn-publish">Publish Post</button>
+              <button type="button" class="btn-cancel" id="btn-cancel-post">Cancel</button>
+            </div>
+            <p class="form-status" id="post-status"></p>
+          </form>
+        </div>
+
+        <!-- Post list -->
+        <div class="card">
+          <div class="card-title">Published Posts</div>
+          <div id="blog-list"><p class="loading">Loading…</p></div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════
+           EVENTS
+           ═══════════════════════════════════ -->
+      <div id="section-events" class="section-pane">
+        <div class="actions-row">
+          <h2 class="section-title" style="margin-bottom:0;">Events</h2>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Add New Event</div>
+          <form id="event-form" novalidate>
+            <div class="form-group">
+              <label>Event Date *</label>
+              <input type="date" id="event-date" required>
+            </div>
+
+            <div class="lang-tabs">
+              <button type="button" class="lang-tab active" data-group="event" data-lang="en" onclick="switchTab('event','en')">EN</button>
+              <button type="button" class="lang-tab" data-group="event" data-lang="uz" onclick="switchTab('event','uz')">UZ</button>
+              <button type="button" class="lang-tab" data-group="event" data-lang="uzcyrl" onclick="switchTab('event','uzcyrl')">ЎЗ</button>
+              <button type="button" class="lang-tab" data-group="event" data-lang="ru" onclick="switchTab('event','ru')">RU</button>
+            </div>
+
+            <div class="lang-panel active" data-group="event" data-lang="en">
+              <div class="form-group"><label>Title *</label><input type="text" id="event-title-en" required></div>
+              <div class="form-group"><label>Location *</label><input type="text" id="event-location-en" required></div>
+              <div class="form-group"><label>Description</label><textarea id="event-desc-en" rows="3"></textarea></div>
+            </div>
+            <div class="lang-panel" data-group="event" data-lang="uz">
+              <div class="form-group"><label>Sarlavha *</label><input type="text" id="event-title-uz" required></div>
+              <div class="form-group"><label>Joylashuv *</label><input type="text" id="event-location-uz" required></div>
+              <div class="form-group"><label>Tavsif</label><textarea id="event-desc-uz" rows="3"></textarea></div>
+            </div>
+            <div class="lang-panel" data-group="event" data-lang="uzcyrl">
+              <div class="form-group"><label>Сарлавҳа *</label><input type="text" id="event-title-uzcyrl" required></div>
+              <div class="form-group"><label>Жойлашув *</label><input type="text" id="event-location-uzcyrl" required></div>
+              <div class="form-group"><label>Тавсиф</label><textarea id="event-desc-uzcyrl" rows="3"></textarea></div>
+            </div>
+            <div class="lang-panel" data-group="event" data-lang="ru">
+              <div class="form-group"><label>Название *</label><input type="text" id="event-title-ru" required></div>
+              <div class="form-group"><label>Место *</label><input type="text" id="event-location-ru" required></div>
+              <div class="form-group"><label>Описание</label><textarea id="event-desc-ru" rows="3"></textarea></div>
+            </div>
+
+            <button type="submit" class="btn-accent">Add Event</button>
+            <p class="form-status" id="event-status"></p>
+          </form>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Upcoming Events</div>
+          <div id="events-list"><p class="loading">Loading…</p></div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════
+           GALLERY
+           ═══════════════════════════════════ -->
+      <div id="section-gallery" class="section-pane">
+        <div class="actions-row">
+          <h2 class="section-title" style="margin-bottom:0;">Gallery</h2>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Upload Photo or Video</div>
+          <form id="gallery-upload-form">
+            <div class="form-group">
+              <label>File * <small style="font-weight:400;">(JPG/PNG/MP4 — max 25 MB)</small></label>
+              <input type="file" id="gallery-file" accept="image/*,video/mp4,video/webm,video/mov" required>
+            </div>
+            <button type="submit" class="btn-accent">Upload to Gallery</button>
+            <p class="form-status" id="gallery-status"></p>
+          </form>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Gallery Items</div>
+          <div id="gallery-list"><p class="loading">Loading…</p></div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════
+           TESTIMONIALS
+           ═══════════════════════════════════ -->
+      <div id="section-testimonials" class="section-pane">
+        <div class="actions-row">
+          <h2 class="section-title" style="margin-bottom:0;">Testimonials</h2>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Add New Testimonial</div>
+          <form id="testimonial-form" novalidate>
+            <div class="row">
+              <div class="form-group">
+                <label>Student Name *</label>
+                <input type="text" id="t-name" required>
+              </div>
+              <div class="form-group">
+                <label>Title / University *</label>
+                <input type="text" id="t-title" placeholder="Bachelor's Student, University of Leeds" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Avatar Photo <small style="font-weight:400;">(optional)</small></label>
+              <input type="file" id="t-avatar" accept="image/*">
+            </div>
+
+            <div class="lang-tabs">
+              <button type="button" class="lang-tab active" data-group="test" data-lang="en" onclick="switchTab('test','en')">EN</button>
+              <button type="button" class="lang-tab" data-group="test" data-lang="uz" onclick="switchTab('test','uz')">UZ</button>
+              <button type="button" class="lang-tab" data-group="test" data-lang="uzcyrl" onclick="switchTab('test','uzcyrl')">ЎЗ</button>
+              <button type="button" class="lang-tab" data-group="test" data-lang="ru" onclick="switchTab('test','ru')">RU</button>
+            </div>
+
+            <div class="lang-panel active" data-group="test" data-lang="en">
+              <div class="form-group"><label>Quote *</label><textarea id="t-quote-en" rows="3" required></textarea></div>
+            </div>
+            <div class="lang-panel" data-group="test" data-lang="uz">
+              <div class="form-group"><label>Iqtibos *</label><textarea id="t-quote-uz" rows="3" required></textarea></div>
+            </div>
+            <div class="lang-panel" data-group="test" data-lang="uzcyrl">
+              <div class="form-group"><label>Иқтибос *</label><textarea id="t-quote-uzcyrl" rows="3" required></textarea></div>
+            </div>
+            <div class="lang-panel" data-group="test" data-lang="ru">
+              <div class="form-group"><label>Цитата *</label><textarea id="t-quote-ru" rows="3" required></textarea></div>
+            </div>
+
+            <button type="submit" class="btn-accent">Add Testimonial</button>
+            <p class="form-status" id="testimonial-status"></p>
+          </form>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Current Testimonials</div>
+          <div id="testimonials-list"><p class="loading">Loading…</p></div>
+        </div>
+      </div>
+
+    </div><!-- /section-body -->
+  </div><!-- /main-content -->
+</div><!-- /app-layout -->
+
+<script src="/js/app.js"></script>
+</body>
+</html>

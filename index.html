@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grant Consulting — Admin Login</title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body class="login-page">
+  <div class="login-box">
+    <div class="login-logo">
+      <span class="logo-mark">GC</span>
+      <span class="logo-text">Grant Consulting</span>
+    </div>
+    <h1 class="login-title">Admin Dashboard</h1>
+    <form id="login-form" class="login-form">
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Enter password" required autofocus>
+      </div>
+      <button type="submit" class="btn-primary" id="login-btn">Sign In</button>
+      <p class="form-error" id="login-error" style="display:none;"></p>
+    </form>
+  </div>
+  <script>
+    if (localStorage.getItem('gc_token')) window.location.href = '/dashboard.html';
+
+    document.getElementById('login-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const password = document.getElementById('password').value;
+      const btn = document.getElementById('login-btn');
+      const errEl = document.getElementById('login-error');
+      btn.disabled = true;
+      btn.textContent = 'Signing in…';
+      errEl.style.display = 'none';
+      try {
+        const res = await fetch('/api/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          localStorage.setItem('gc_token', data.token);
+          window.location.href = '/dashboard.html';
+        } else {
+          errEl.textContent = 'Wrong password. Try again.';
+          errEl.style.display = 'block';
+          btn.disabled = false;
+          btn.textContent = 'Sign In';
+        }
+      } catch {
+        errEl.textContent = 'Connection error. Please try again.';
+        errEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Sign In';
+      }
+    });
+  </script>
+</body>
+</html>
