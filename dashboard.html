@@ -204,9 +204,10 @@
               </div>
             </div>
 
-            <div style="display:flex;gap:12px;margin-top:24px;align-items:center;">
-              <button type="submit" class="btn-accent" id="btn-publish">Publish Post</button>
+            <div style="display:flex;gap:12px;margin-top:24px;align-items:center;flex-wrap:wrap;">
+              <button type="submit" class="btn-accent" id="btn-publish" disabled>Publish Post</button>
               <button type="button" class="btn-cancel" id="btn-cancel-post">Cancel</button>
+              <p class="form-hint" id="post-hint" style="margin:0;">Fill all 4 language tabs to enable</p>
             </div>
             <p class="form-status" id="post-status"></p>
           </form>
@@ -262,7 +263,8 @@
               <div class="form-group"><label>Описание</label><textarea id="event-desc-ru" rows="3"></textarea></div>
             </div>
 
-            <button type="submit" class="btn-accent">Add Event</button>
+            <button type="submit" class="btn-accent" id="btn-add-event" disabled>Add Event</button>
+            <p class="form-hint" id="event-hint">Fill all 4 language tabs to enable</p>
             <p class="form-status" id="event-status"></p>
           </form>
         </div>
@@ -346,7 +348,8 @@
               <div class="form-group"><label>Цитата *</label><textarea id="t-quote-ru" rows="3" required></textarea></div>
             </div>
 
-            <button type="submit" class="btn-accent">Add Testimonial</button>
+            <button type="submit" class="btn-accent" id="btn-add-testimonial" disabled>Add Testimonial</button>
+            <p class="form-hint" id="testimonial-hint">Fill all 4 language tabs to enable</p>
             <p class="form-status" id="testimonial-status"></p>
           </form>
         </div>

@@ -205,6 +205,65 @@ async function loadBlog() {
   }
 }
 
+// ====================================================
+// READINESS CHECKS — all 4 languages must be filled
+// ====================================================
+
+function setReady(btnId, hintId, isReady) {
+  const btn = document.getElementById(btnId);
+  const hint = document.getElementById(hintId);
+  btn.disabled = !isReady;
+  if (hint) hint.classList.toggle('hidden', isReady);
+}
+
+function checkBlogReady() {
+  const slug = document.getElementById('post-slug').value.trim();
+  const datetime = document.getElementById('post-datetime').value;
+  if (!slug || !datetime) { setReady('btn-publish', 'post-hint', false); return; }
+
+  const ok = LANGS.every(lang => {
+    const title   = document.getElementById(`post-title-${lang}`).value.trim();
+    const excerpt = document.getElementById(`post-excerpt-${lang}`).value.trim();
+    const date    = document.getElementById(`post-date-${lang}`).value.trim();
+    const hasPara = Array.from(
+      document.querySelectorAll(`#sections-${lang} .para-input`)
+    ).some(t => t.value.trim());
+    return title && excerpt && date && hasPara;
+  });
+  setReady('btn-publish', 'post-hint', ok);
+}
+
+function checkEventReady() {
+  const date = document.getElementById('event-date').value;
+  if (!date) { setReady('btn-add-event', 'event-hint', false); return; }
+
+  const ok = LANGS.every(lang => {
+    const title    = document.getElementById(`event-title-${lang}`).value.trim();
+    const location = document.getElementById(`event-location-${lang}`).value.trim();
+    return title && location;
+  });
+  setReady('btn-add-event', 'event-hint', ok);
+}
+
+function checkTestimonialReady() {
+  const name  = document.getElementById('t-name').value.trim();
+  const title = document.getElementById('t-title').value.trim();
+  if (!name || !title) { setReady('btn-add-testimonial', 'testimonial-hint', false); return; }
+
+  const ok = LANGS.every(lang =>
+    document.getElementById(`t-quote-${lang}`).value.trim()
+  );
+  setReady('btn-add-testimonial', 'testimonial-hint', ok);
+}
+
+// Wire up listeners — use event delegation on the form so dynamic
+// textareas added by the sections builder are caught automatically
+document.getElementById('post-form').addEventListener('input', checkBlogReady);
+document.getElementById('post-form').addEventListener('change', checkBlogReady);
+document.getElementById('event-form').addEventListener('input', checkEventReady);
+document.getElementById('event-form').addEventListener('change', checkEventReady);
+document.getElementById('testimonial-form').addEventListener('input', checkTestimonialReady);
+
 // Auto-slug from EN title
 document.getElementById('post-title-en').addEventListener('input', function() {
   const slug = document.getElementById('post-slug');
@@ -223,8 +282,10 @@ document.getElementById('btn-cancel-post').addEventListener('click', () => {
   document.getElementById('post-form-wrap').style.display = 'none';
   document.getElementById('btn-new-post').style.display = '';
   document.getElementById('post-form').reset();
+  delete document.getElementById('post-slug').dataset.manual;
   resetSections();
   setStatus('post-status', '', '');
+  setReady('btn-publish', 'post-hint', false);
 });
 
 document.getElementById('post-form').addEventListener('submit', async function(e) {
@@ -426,6 +487,7 @@ document.getElementById('event-form').addEventListener('submit', async function(
       `Add event: ${document.getElementById('event-title-en').value.trim()}`);
     setStatus('event-status', '✓ Event added! Site rebuilds in ~1 minute.', 'success');
     this.reset();
+    setReady('btn-add-event', 'event-hint', false);
     await loadEvents();
   } catch (err) {
     setStatus('event-status', `Error: ${esc(err.message)}`, 'error');
@@ -588,6 +650,7 @@ document.getElementById('testimonial-form').addEventListener('submit', async fun
     await writeJSON('src/_data/testimonials.json', testData, sha, `Add testimonial: ${name}`);
     setStatus('testimonial-status', '✓ Added! Site rebuilds in ~1 minute.', 'success');
     this.reset();
+    setReady('btn-add-testimonial', 'testimonial-hint', false);
     await loadTestimonials();
   } catch (err) {
     setStatus('testimonial-status', `Error: ${esc(err.message)}`, 'error');

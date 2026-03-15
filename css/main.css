@@ -505,6 +505,15 @@ textarea { resize: vertical; min-height: 88px; line-height: 1.55; }
 .form-status.success { color: #1d6b43; }
 .form-status.error   { color: #b63a2b; }
 
+.form-hint {
+  font-size: 0.8125rem;
+  color: var(--gray-300);
+  margin-top: 8px;
+  transition: opacity 0.2s;
+}
+
+.form-hint.hidden { display: none; }
+
 /* =============================================
    LANGUAGE TABS
    ============================================= */
