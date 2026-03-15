@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uz">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Grant Consulting — Dashboard</title>
+  <title>Грант Консалтинг — Панел</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
@@ -20,33 +20,33 @@
     </div>
 
     <nav class="sidebar-nav">
-      <div class="nav-label">Content</div>
+      <div class="nav-label">Мазмун</div>
       <button class="nav-item active" data-section="overview">
-        <span class="nav-icon">◼</span> Overview
+        <span class="nav-icon">◼</span> Умумий кўриниш
       </button>
       <button class="nav-item" data-section="blog">
-        <span class="nav-icon">✍</span> Blog Posts
+        <span class="nav-icon">✍</span> Блог мақолалари
       </button>
       <button class="nav-item" data-section="events">
-        <span class="nav-icon">◆</span> Events
+        <span class="nav-icon">◆</span> Тадбирлар
       </button>
       <button class="nav-item" data-section="gallery">
-        <span class="nav-icon">▣</span> Gallery
+        <span class="nav-icon">▣</span> Галерея
       </button>
       <button class="nav-item" data-section="testimonials">
-        <span class="nav-icon">❝</span> Testimonials
+        <span class="nav-icon">❝</span> Тавсиялар
       </button>
     </nav>
 
     <div class="sidebar-footer">
-      <button class="btn-sidebar" id="btn-logout">Sign Out</button>
+      <button class="btn-sidebar" id="btn-logout">Чиқиш</button>
     </div>
   </aside>
 
   <!-- ─── Main ─── -->
   <div class="main-content">
     <header class="main-header">
-      <span class="main-header-title" id="page-title">Overview</span>
+      <span class="main-header-title" id="page-title">Умумий кўриниш</span>
       <span class="main-header-meta">grant-consulting.uz</span>
     </header>
 
@@ -58,15 +58,15 @@
       <div id="section-overview" class="section-pane active">
         <div id="overview-stats"></div>
         <div class="card">
-          <div class="card-title">How the dashboard works</div>
+          <div class="card-title">Панел қандай ишлайди</div>
           <div class="info-box">
-            After every change you make here, the website at <strong>grant-consulting.uz</strong> automatically rebuilds via Cloudflare Pages. Changes go live in about <strong>1 minute</strong>.
+            Бу ерда ҳар бир ўзгартиришдан сўнг, <strong>grant-consulting.uz</strong> сайти Cloudflare Pages орқали автоматик янгиланади. Ўзгаришлар тахминан <strong>1 дақиқа</strong> ичида кучга киради.
           </div>
           <ul style="color:var(--gray-500);font-size:0.9rem;line-height:2.2;padding-left:20px;">
-            <li><strong style="color:var(--black);">Blog Posts</strong> — publish new articles in all 4 languages (EN / UZ / ЎЗ / RU)</li>
-            <li><strong style="color:var(--black);">Events</strong> — add upcoming events shown on the Events page</li>
-            <li><strong style="color:var(--black);">Gallery</strong> — upload photos and videos (max 25 MB each)</li>
-            <li><strong style="color:var(--black);">Testimonials</strong> — add or remove student success stories</li>
+            <li><strong style="color:var(--black);">Блог мақолалари</strong> — барча 4 тилда янги мақолалар чоп этиш (EN / UZ / ЎЗ / RU)</li>
+            <li><strong style="color:var(--black);">Тадбирлар</strong> — Тадбирлар саҳифасида кўрсатиладиган яқинлашаётган тадбирларни қўшиш</li>
+            <li><strong style="color:var(--black);">Галерея</strong> — расм ва видеоларни юклаш (ҳар бири максимум 25 МБ)</li>
+            <li><strong style="color:var(--black);">Тавсиялар</strong> — талабаларнинг муваффақият ҳикояларини қўшиш ёки яшириш</li>
           </ul>
         </div>
       </div>
@@ -76,34 +76,34 @@
            ═══════════════════════════════════ -->
       <div id="section-blog" class="section-pane">
         <div class="actions-row">
-          <h2 class="section-title">Blog Posts</h2>
-          <button class="btn-accent" id="btn-new-post">+ New Post</button>
+          <h2 class="section-title">Блог мақолалари</h2>
+          <button class="btn-accent" id="btn-new-post">+ Янги мақола</button>
         </div>
 
         <!-- New post form -->
         <div id="post-form-wrap" class="card" style="display:none;">
-          <div class="card-title">New Blog Post</div>
+          <div class="card-title">Янги блог мақоласи</div>
           <form id="post-form" novalidate>
 
             <div class="row">
               <div class="form-group">
                 <label>Slug (URL) *</label>
                 <input type="text" id="post-slug" placeholder="my-post-title" required>
-                <div style="font-size:0.75rem;color:var(--gray-500);margin-top:4px;">Used in URL: /en/blog-my-post-title.html</div>
+                <div style="font-size:0.75rem;color:var(--gray-500);margin-top:4px;">URL мисоли: /en/blog-my-post-title.html</div>
               </div>
               <div class="form-group">
-                <label>Author</label>
+                <label>Муаллиф</label>
                 <input type="text" id="post-author" value="Admin">
               </div>
             </div>
 
             <div class="row">
               <div class="form-group">
-                <label>Date * <small>(for sorting, e.g. 2025-04-10)</small></label>
+                <label>Сана * <small>(тартиблаш учун, масалан 2025-04-10)</small></label>
                 <input type="date" id="post-datetime" required>
               </div>
               <div class="form-group">
-                <label>Featured Image <small>(JPG or PNG)</small></label>
+                <label>Асосий расм <small>(JPG ёки PNG)</small></label>
                 <input type="file" id="post-image" accept="image/*">
               </div>
             </div>
@@ -166,12 +166,12 @@
               <div class="form-group"><label>Қисқача *</label><textarea id="post-excerpt-uzcyrl" rows="2" required></textarea></div>
               <div class="form-group"><label>Сана * <small>(масалан, 10 апрел, 2025)</small></label><input type="text" id="post-date-uzcyrl" placeholder="10 апрел, 2025" required></div>
               <div class="form-group">
-                <label>Контент *</label>
+                <label>Мазмун *</label>
                 <div id="sections-uzcyrl" class="sections-builder">
                   <div class="section-item">
                     <input type="text" class="section-heading" placeholder="Бўлим сарлавҳаси (ихтиёрий)">
                     <div class="paragraphs" style="margin-top:8px;">
-                      <textarea class="para-input" placeholder="Параграф ёзинг…" rows="5"></textarea>
+                      <textarea class="para-input" placeholder="Параграфингизни шу ерга ёзинг…" rows="5"></textarea>
                       <div class="section-item-actions">
                         <button type="button" class="btn-sm" onclick="addParagraph(this)">+ Параграф қўшиш</button>
                       </div>
@@ -205,17 +205,17 @@
             </div>
 
             <div style="display:flex;gap:12px;margin-top:24px;align-items:center;flex-wrap:wrap;">
-              <button type="submit" class="btn-accent" id="btn-publish" disabled>Publish Post</button>
-              <button type="button" class="btn-cancel" id="btn-cancel-post">Cancel</button>
-              <p class="form-hint" id="post-hint" style="margin:0;">Fill all 4 language tabs to enable</p>
+              <button type="submit" class="btn-accent" id="btn-publish" disabled>Мақолани нашр этиш</button>
+              <button type="button" class="btn-cancel" id="btn-cancel-post">Бекор қилиш</button>
+              <p class="form-hint" id="post-hint" style="margin:0;">Фаоллаштириш учун барча 4 тил табини тўлдиринг</p>
             </div>
             <p class="form-status" id="post-status"></p>
           </form>
         </div>
 
         <div class="card">
-          <div class="card-title">Published Posts</div>
-          <div id="blog-list"><p class="loading">Loading…</p></div>
+          <div class="card-title">Нашр этилган мақолалар</div>
+          <div id="blog-list"><p class="loading">Юкланмоқда…</p></div>
         </div>
       </div>
 
@@ -224,14 +224,14 @@
            ═══════════════════════════════════ -->
       <div id="section-events" class="section-pane">
         <div class="actions-row">
-          <h2 class="section-title">Events</h2>
+          <h2 class="section-title">Тадбирлар</h2>
         </div>
 
         <div class="card">
-          <div class="card-title">Add New Event</div>
+          <div class="card-title">Янги тадбир қўшиш</div>
           <form id="event-form" novalidate>
             <div class="form-group">
-              <label>Event Date *</label>
+              <label>Тадбир санаси *</label>
               <input type="date" id="event-date" required>
             </div>
 
@@ -263,15 +263,15 @@
               <div class="form-group"><label>Описание</label><textarea id="event-desc-ru" rows="3"></textarea></div>
             </div>
 
-            <button type="submit" class="btn-accent" id="btn-add-event" disabled>Add Event</button>
-            <p class="form-hint" id="event-hint">Fill all 4 language tabs to enable</p>
+            <button type="submit" class="btn-accent" id="btn-add-event" disabled>Тадбир қўшиш</button>
+            <p class="form-hint" id="event-hint">Фаоллаштириш учун барча 4 тил табини тўлдиринг</p>
             <p class="form-status" id="event-status"></p>
           </form>
         </div>
 
         <div class="card">
-          <div class="card-title">Upcoming Events</div>
-          <div id="events-list"><p class="loading">Loading…</p></div>
+          <div class="card-title">Яқинлашаётган тадбирлар</div>
+          <div id="events-list"><p class="loading">Юкланмоқда…</p></div>
         </div>
       </div>
 
@@ -280,25 +280,25 @@
            ═══════════════════════════════════ -->
       <div id="section-gallery" class="section-pane">
         <div class="actions-row">
-          <h2 class="section-title">Gallery</h2>
+          <h2 class="section-title">Галерея</h2>
         </div>
 
         <div class="card">
-          <div class="card-title">Upload Photo or Video</div>
-          <div class="info-box">Accepted formats: JPG, PNG, MP4. Maximum file size: 25 MB per file.</div>
+          <div class="card-title">Расм ёки видео юклаш</div>
+          <div class="info-box">Қабул қилинадиган форматлар: JPG, PNG, MP4. Ҳар бир файл учун максимал ўлчам: 25 МБ.</div>
           <form id="gallery-upload-form">
             <div class="form-group">
-              <label>Choose file *</label>
+              <label>Файлни танланг *</label>
               <input type="file" id="gallery-file" accept="image/*,video/mp4,video/webm" required>
             </div>
-            <button type="submit" class="btn-accent">Upload to Gallery</button>
+            <button type="submit" class="btn-accent">Галереяга юклаш</button>
             <p class="form-status" id="gallery-status"></p>
           </form>
         </div>
 
         <div class="card">
-          <div class="card-title">Gallery Items</div>
-          <div id="gallery-list"><p class="loading">Loading…</p></div>
+          <div class="card-title">Галерея элементлари</div>
+          <div id="gallery-list"><p class="loading">Юкланмоқда…</p></div>
         </div>
       </div>
 
@@ -307,19 +307,19 @@
            ═══════════════════════════════════ -->
       <div id="section-testimonials" class="section-pane">
         <div class="actions-row">
-          <h2 class="section-title">Testimonials</h2>
+          <h2 class="section-title">Тавсиялар</h2>
         </div>
 
         <div class="card">
-          <div class="card-title">Add New Testimonial</div>
+          <div class="card-title">Янги тавсия қўшиш</div>
           <form id="testimonial-form" novalidate>
             <div class="row">
               <div class="form-group">
-                <label>Student Name *</label>
+                <label>Талаба исми *</label>
                 <input type="text" id="t-name" placeholder="Aziza Karimova" required>
               </div>
               <div class="form-group">
-                <label>Title / University *</label>
+                <label>Унвон / Университет *</label>
                 <input type="text" id="t-title" placeholder="Bachelor's Student, University of Leeds" required>
               </div>
             </div>
@@ -343,15 +343,15 @@
               <div class="form-group"><label>Цитата *</label><textarea id="t-quote-ru" rows="3" required></textarea></div>
             </div>
 
-            <button type="submit" class="btn-accent" id="btn-add-testimonial" disabled>Add Testimonial</button>
-            <p class="form-hint" id="testimonial-hint">Fill all 4 language tabs to enable</p>
+            <button type="submit" class="btn-accent" id="btn-add-testimonial" disabled>Тавсия қўшиш</button>
+            <p class="form-hint" id="testimonial-hint">Фаоллаштириш учун барча 4 тил табини тўлдиринг</p>
             <p class="form-status" id="testimonial-status"></p>
           </form>
         </div>
 
         <div class="card">
-          <div class="card-title">Current Testimonials</div>
-          <div id="testimonials-list"><p class="loading">Loading…</p></div>
+          <div class="card-title">Жорий тавсиялар</div>
+          <div id="testimonials-list"><p class="loading">Юкланмоқда…</p></div>
         </div>
       </div>
 

@@ -8,11 +8,11 @@ if (!TOKEN) window.location.href = '/';
 const LANGS = ['en', 'uz', 'uzcyrl', 'ru'];
 const SECTIONS = ['overview', 'blog', 'events', 'gallery', 'testimonials'];
 const SECTION_TITLES = {
-  overview: 'Overview',
-  blog: 'Blog Posts',
-  events: 'Events',
-  gallery: 'Gallery',
-  testimonials: 'Testimonials'
+  overview: 'Умумий кўриниш',
+  blog: 'Блог мақолалари',
+  events: 'Тадбирлар',
+  gallery: 'Галерея',
+  testimonials: 'Тавсиялар'
 };
 
 // ====================================================
@@ -35,7 +35,7 @@ async function apiRequest(path, method = 'GET', body = null) {
 
 async function readJSON(path) {
   const data = await apiRequest(path);
-  if (!data) throw new Error('Session expired');
+  if (!data) throw new Error('Сессия муддати тугади');
   if (data.message && !data.content) throw new Error(data.message);
   const raw = atob(data.content.replace(/\n/g, ''));
   return { content: JSON.parse(raw), sha: data.sha };
@@ -149,7 +149,7 @@ function switchTab(group, lang) {
 
 async function loadOverview() {
   const el = document.getElementById('overview-stats');
-  el.innerHTML = '<p class="loading">Loading stats…</p>';
+  el.innerHTML = '<p class="loading">Статистика юкланмоқда…</p>';
   try {
     const [blog, events, gallery, testimonials] = await Promise.all([
       readJSON('src/_data/blog.json'),
@@ -161,23 +161,23 @@ async function loadOverview() {
       <div class="overview-cards">
         <div class="ov-card" onclick="navigate('blog')">
           <div class="ov-num">${(blog.content.en || []).length}</div>
-          <div class="ov-label">Blog Posts</div>
+          <div class="ov-label">Блог мақолалари</div>
         </div>
         <div class="ov-card" onclick="navigate('events')">
           <div class="ov-num">${(events.content.en || []).length}</div>
-          <div class="ov-label">Events</div>
+          <div class="ov-label">Тадбирлар</div>
         </div>
         <div class="ov-card" onclick="navigate('gallery')">
           <div class="ov-num">${gallery.content.length}</div>
-          <div class="ov-label">Gallery Items</div>
+          <div class="ov-label">Галерея элементлари</div>
         </div>
         <div class="ov-card" onclick="navigate('testimonials')">
           <div class="ov-num">${(testimonials.content.en || []).length}</div>
-          <div class="ov-label">Testimonials</div>
+          <div class="ov-label">Тавсиялар</div>
         </div>
       </div>`;
   } catch (e) {
-    el.innerHTML = `<p class="error-msg">Could not load stats: ${esc(e.message)}</p>`;
+    el.innerHTML = `<p class="error-msg">Статистикани юклаб бўлмади: ${esc(e.message)}</p>`;
   }
 }
 
@@ -187,7 +187,7 @@ async function loadOverview() {
 
 async function loadBlog() {
   const el = document.getElementById('blog-list');
-  el.innerHTML = '<p class="loading">Loading…</p>';
+  el.innerHTML = '<p class="loading">Юкланмоқда…</p>';
   try {
     const { content } = await readJSON('src/_data/blog.json');
     const posts = content.en || [];
@@ -195,7 +195,7 @@ async function loadBlog() {
 
     let html = '';
     if (!posts.length) {
-      html += '<p class="muted">No posts yet.</p>';
+      html += '<p class="muted">Ҳали мақолалар йўқ.</p>';
     } else {
       html += posts.map((p, i) => `
         <div class="list-item">
@@ -204,16 +204,16 @@ async function loadBlog() {
             <span class="meta">${esc(p.date)}</span>
           </div>
           <div class="list-item-actions">
-            <a href="https://grant-consulting.uz/en/${esc(p.link)}" target="_blank" class="btn-sm">View ↗</a>
-            ${p.cmsPost ? `<button class="btn-sm btn-danger" onclick="archiveBlogPost(${i})">Archive</button>` : ''}
+            <a href="https://grant-consulting.uz/en/${esc(p.link)}" target="_blank" class="btn-sm">Кўриш ↗</a>
+            ${p.cmsPost ? `<button class="btn-sm btn-danger" onclick="archiveBlogPost(${i})">Архивлаш</button>` : ''}
           </div>
         </div>`).join('');
     }
 
     if (archived.length) {
       html += `<div class="archived-section">
-        <h3 class="archived-title">Archived — ${archived.length} hidden post${archived.length !== 1 ? 's' : ''}</h3>
-        <p class="form-hint">These posts are hidden from the blog listing but the pages still exist. Press ↩ to restore.</p>
+        <h3 class="archived-title">Архив — ${archived.length} та яширин мақола</h3>
+        <p class="form-hint">Бу мақолалар блог рўйхатидан яширилган. Тиклаш учун ↩ ни босинг.</p>
         ${archived.map((entry, i) => {
           const p = entry.en || Object.values(entry)[0];
           return `<div class="list-item list-item--archived">
@@ -222,7 +222,7 @@ async function loadBlog() {
               <span class="meta">${esc(p.date)}</span>
             </div>
             <div class="list-item-actions">
-              <button class="btn-sm btn-restore-sm" onclick="restoreBlogPost(${i})">↩ Restore</button>
+              <button class="btn-sm btn-restore-sm" onclick="restoreBlogPost(${i})">↩ Тиклаш</button>
             </div>
           </div>`;
         }).join('')}
@@ -231,7 +231,7 @@ async function loadBlog() {
 
     el.innerHTML = html;
   } catch (e) {
-    el.innerHTML = `<p class="error-msg">Error: ${esc(e.message)}</p>`;
+    el.innerHTML = `<p class="error-msg">Хато: ${esc(e.message)}</p>`;
   }
 }
 
@@ -348,7 +348,7 @@ function getSections(lang) {
 async function publishPost() {
   const btn = document.getElementById('btn-publish');
   btn.disabled = true;
-  setStatus('post-status', 'Publishing…', '');
+  setStatus('post-status', 'Нашр этилмоқда…', '');
 
   const slug = document.getElementById('post-slug').value.trim();
   const author = document.getElementById('post-author').value.trim() || 'Admin';
@@ -358,13 +358,13 @@ async function publishPost() {
 
   // Basic validation
   if (!slug || !datetime) {
-    setStatus('post-status', 'Please fill in Slug and Date.', 'error');
+    setStatus('post-status', 'Slug ва Санани тўлдиринг.', 'error');
     btn.disabled = false;
     return;
   }
   const enTitle = document.getElementById('post-title-en').value.trim();
   if (!enTitle) {
-    setStatus('post-status', 'English title is required.', 'error');
+    setStatus('post-status', 'Инглизча сарлавҳа талаб қилинади.', 'error');
     btn.disabled = false;
     return;
   }
@@ -372,13 +372,13 @@ async function publishPost() {
   try {
     // 1. Upload image
     if (imageFile) {
-      setStatus('post-status', 'Uploading image…', '');
+      setStatus('post-status', 'Расм юкланмоқда…', '');
       const b64 = await fileToBase64(imageFile);
       await uploadFile(`src/img/blog/${imageFilename}`, b64, `Blog image: ${imageFilename}`);
     }
 
     // 2. Read blogPosts.json
-    setStatus('post-status', 'Saving post data…', '');
+    setStatus('post-status', 'Мақола маълумотлари сақланмоқда…', '');
     const { content: postsArr, sha: postsSha } = await readJSON('src/_data/blogPosts.json');
     const newIndex = postsArr.length;
 
@@ -414,12 +414,12 @@ async function publishPost() {
     await writeJSON('src/_data/blog.json', blogData, blogSha, `Blog listing: ${enTitle}`);
 
     // 4. Create .njk template file
-    setStatus('post-status', 'Creating page template…', '');
+    setStatus('post-status', 'Саҳифа шаблони яратилмоқда…', '');
     const njkContent = `---js\n{\n  pagination: { data: "languages", size: 1, alias: "lang" },\n  permalink: function(data) { return data.lang.code + "/blog-${slug}.html"; },\n  layout: "layouts/page.njk",\n  pageCss: "css/blog-post.css",\n  navKey: "Blog",\n  extraFonts: "&family=Merriweather:wght@700",\n  currentPage: "blog-${slug}.html",\n  postIdx: ${newIndex},\n  eleventyComputed: {\n    title: function(data) { var L = data.lang.code; return (data.blogPosts[${newIndex}][L] || data.blogPosts[${newIndex}].en).title + " - Grant Consulting"; },\n    description: function(data) { var L = data.lang.code; return (data.blogPosts[${newIndex}][L] || data.blogPosts[${newIndex}].en).excerpt; },\n    heroTitle: function(data) { var L = data.lang.code; return (data.blogPosts[${newIndex}][L] || data.blogPosts[${newIndex}].en).title; },\n    breadcrumbs: function(data) {\n      var L = data.lang.code;\n      return [\n        { label: (data.ui[L]||data.ui.en).page_blog_hero, url: "blog.html" },\n        { label: (data.blogPosts[${newIndex}][L] || data.blogPosts[${newIndex}].en).title }\n      ];\n    }\n  }\n}\n---\n{%- include "partials/blog-post-content.njk" %}\n`;
     const njkB64 = btoa(unescape(encodeURIComponent(njkContent)));
     await uploadFile(`src/blog-${slug}.njk`, njkB64, `Blog template: blog-${slug}.njk`);
 
-    setStatus('post-status', '✓ Published! Site rebuilds in ~1 minute.', 'success');
+    setStatus('post-status', '✓ Нашр этилди! Сайт ~1 дақиқа ичида янгиланади.', 'success');
     document.getElementById('post-form').reset();
     delete document.getElementById('post-slug').dataset.manual;
     resetSections();
@@ -427,13 +427,13 @@ async function publishPost() {
     document.getElementById('btn-new-post').style.display = '';
     await loadBlog();
   } catch (err) {
-    setStatus('post-status', `Error: ${esc(err.message)}`, 'error');
+    setStatus('post-status', `Хато: ${esc(err.message)}`, 'error');
   }
   btn.disabled = false;
 }
 
 async function archiveBlogPost(index) {
-  if (!confirm('Archive this post? It will be hidden from the blog listing but can be restored.')) return;
+  if (!confirm('Мақолани архивлаш? У блог рўйхатидан яширилади, лекин тиклаш мумкин.')) return;
   try {
     const { content: blogData, sha } = await readJSON('src/_data/blog.json');
     const entry = {};
@@ -445,12 +445,12 @@ async function archiveBlogPost(index) {
     await writeJSON('src/_data/blog.json', blogData, sha, `Archive blog post`);
     await loadBlog();
   } catch (err) {
-    alert(`Error: ${err.message}`);
+    alert(`Хато: ${err.message}`);
   }
 }
 
 async function restoreBlogPost(index) {
-  if (!confirm('Restore this post to the blog listing?')) return;
+  if (!confirm('Мақолани блог рўйхатига тиклаш?')) return;
   try {
     const { content: blogData, sha } = await readJSON('src/_data/blog.json');
     const entry = blogData._archived.splice(index, 1)[0];
@@ -461,7 +461,7 @@ async function restoreBlogPost(index) {
     await writeJSON('src/_data/blog.json', blogData, sha, `Restore blog post`);
     await loadBlog();
   } catch (err) {
-    alert(`Error: ${err.message}`);
+    alert(`Хато: ${err.message}`);
   }
 }
 
@@ -476,8 +476,8 @@ function addSection(lang) {
     <div class="paragraphs" style="margin-top:8px;">
       <textarea class="para-input" placeholder="Write paragraph here…" rows="5"></textarea>
       <div class="section-item-actions">
-        <button type="button" class="btn-sm" onclick="addParagraph(this)">+ Add paragraph</button>
-        <button type="button" class="btn-sm btn-danger" onclick="this.closest('.section-item').remove()">Remove section</button>
+        <button type="button" class="btn-sm" onclick="addParagraph(this)">+ Параграф қўшиш</button>
+        <button type="button" class="btn-sm btn-danger" onclick="this.closest('.section-item').remove()">Бўлимни ўчириш</button>
       </div>
     </div>`;
   builder.insertBefore(div, addBtn);
@@ -498,7 +498,7 @@ function addParagraph(btn) {
 
 async function loadEvents() {
   const el = document.getElementById('events-list');
-  el.innerHTML = '<p class="loading">Loading…</p>';
+  el.innerHTML = '<p class="loading">Юкланмоқда…</p>';
   try {
     const { content } = await readJSON('src/_data/events.json');
     const items = content.en || [];
@@ -506,7 +506,7 @@ async function loadEvents() {
 
     let html = '';
     if (!items.length) {
-      html += '<p class="muted">No events yet. Use the form above to add one.</p>';
+      html += '<p class="muted">Ҳали тадбирлар йўқ. Юқоридаги формадан фойдаланинг.</p>';
     } else {
       html += items.map((ev, i) => `
         <div class="list-item">
@@ -515,15 +515,15 @@ async function loadEvents() {
             <span class="meta">${esc(ev.date)} · ${esc(ev.location)}</span>
           </div>
           <div class="list-item-actions">
-            <button class="btn-sm btn-danger" onclick="deleteEvent(${i})">Archive</button>
+            <button class="btn-sm btn-danger" onclick="deleteEvent(${i})">Архивлаш</button>
           </div>
         </div>`).join('');
     }
 
     if (archived.length) {
       html += `<div class="archived-section">
-        <h3 class="archived-title">Archived — ${archived.length} hidden event${archived.length !== 1 ? 's' : ''}</h3>
-        <p class="form-hint">These events are hidden from the site. Press ↩ to restore.</p>
+        <h3 class="archived-title">Архив — ${archived.length} та яширин тадбир</h3>
+        <p class="form-hint">Бу тадбирлар сайтдан яширилган. Тиклаш учун ↩ ни босинг.</p>
         ${archived.map((entry, i) => {
           const ev = entry.en || Object.values(entry)[0];
           return `<div class="list-item list-item--archived">
@@ -532,7 +532,7 @@ async function loadEvents() {
               <span class="meta">${esc(ev.date)} · ${esc(ev.location)}</span>
             </div>
             <div class="list-item-actions">
-              <button class="btn-sm btn-restore-sm" onclick="restoreEvent(${i})">↩ Restore</button>
+              <button class="btn-sm btn-restore-sm" onclick="restoreEvent(${i})">↩ Тиклаш</button>
             </div>
           </div>`;
         }).join('')}
@@ -541,7 +541,7 @@ async function loadEvents() {
 
     el.innerHTML = html;
   } catch (e) {
-    el.innerHTML = `<p class="error-msg">Error: ${esc(e.message)}</p>`;
+    el.innerHTML = `<p class="error-msg">Хато: ${esc(e.message)}</p>`;
   }
 }
 
@@ -549,11 +549,11 @@ document.getElementById('event-form').addEventListener('submit', async function(
   e.preventDefault();
   const btn = this.querySelector('button[type="submit"]');
   btn.disabled = true;
-  setStatus('event-status', 'Saving…', '');
+  setStatus('event-status', 'Сақланмоқда…', '');
 
   const dateVal = document.getElementById('event-date').value;
   if (!dateVal || !document.getElementById('event-title-en').value.trim()) {
-    setStatus('event-status', 'Date and English title are required.', 'error');
+    setStatus('event-status', 'Сана ва инглизча сарлавҳа талаб қилинади.', 'error');
     btn.disabled = false;
     return;
   }
@@ -573,18 +573,18 @@ document.getElementById('event-form').addEventListener('submit', async function(
     });
     await writeJSON('src/_data/events.json', evData, sha,
       `Add event: ${document.getElementById('event-title-en').value.trim()}`);
-    setStatus('event-status', '✓ Event added! Site rebuilds in ~1 minute.', 'success');
+    setStatus('event-status', '✓ Тадбир қўшилди! Сайт ~1 дақиқа ичида янгиланади.', 'success');
     this.reset();
     setReady('btn-add-event', 'event-hint', false);
     await loadEvents();
   } catch (err) {
-    setStatus('event-status', `Error: ${esc(err.message)}`, 'error');
+    setStatus('event-status', `Хато: ${esc(err.message)}`, 'error');
   }
   btn.disabled = false;
 });
 
 async function deleteEvent(index) {
-  if (!confirm('Archive this event? It will be hidden from the site but can be restored.')) return;
+  if (!confirm('Тадбирни архивлаш? У сайтдан яширилади, лекин тиклаш мумкин.')) return;
   try {
     const { content: evData, sha } = await readJSON('src/_data/events.json');
     const entry = {};
@@ -596,12 +596,12 @@ async function deleteEvent(index) {
     await writeJSON('src/_data/events.json', evData, sha, 'Archive event');
     await loadEvents();
   } catch (err) {
-    alert(`Error: ${err.message}`);
+    alert(`Хато: ${err.message}`);
   }
 }
 
 async function restoreEvent(index) {
-  if (!confirm('Restore this event to the site?')) return;
+  if (!confirm('Тадбирни сайтга тиклаш?')) return;
   try {
     const { content: evData, sha } = await readJSON('src/_data/events.json');
     const entry = evData._archived.splice(index, 1)[0];
@@ -612,7 +612,7 @@ async function restoreEvent(index) {
     await writeJSON('src/_data/events.json', evData, sha, 'Restore event');
     await loadEvents();
   } catch (err) {
-    alert(`Error: ${err.message}`);
+    alert(`Хато: ${err.message}`);
   }
 }
 
@@ -622,7 +622,7 @@ async function restoreEvent(index) {
 
 async function loadGallery() {
   const el = document.getElementById('gallery-list');
-  el.innerHTML = '<p class="loading">Loading…</p>';
+  el.innerHTML = '<p class="loading">Юкланмоқда…</p>';
   try {
     const [{ content }, dirFiles] = await Promise.all([
       readJSON('src/_data/gallery.json'),
@@ -645,7 +645,7 @@ async function loadGallery() {
     let html = '';
 
     if (!content.length) {
-      html += '<p class="muted">Gallery is empty.</p>';
+      html += '<p class="muted">Галерея бўш.</p>';
     } else {
       html += `<div class="gallery-admin-grid">${content.map((item, i) => `
         <div class="gallery-admin-item">
@@ -654,14 +654,14 @@ async function loadGallery() {
             : `<img src="${thumbUrl(item.file)}" alt="" loading="lazy" onerror="this.style.display='none'">`
           }
           <div class="gallery-admin-label">${esc(item.file)}</div>
-          <button class="btn-del" onclick="deleteGalleryItem(${i})" title="Hide from gallery">✕</button>
+          <button class="btn-del" onclick="deleteGalleryItem(${i})" title="Галереядан яшириш">✕</button>
         </div>`).join('')}</div>`;
     }
 
     if (archived.length) {
       html += `<div class="archived-section">
-        <h3 class="archived-title">Archived — ${archived.length} hidden file${archived.length !== 1 ? 's' : ''}</h3>
-        <p class="form-hint">These files are in the repo but not shown on the site. Press ↩ to restore.</p>
+        <h3 class="archived-title">Архив — ${archived.length} та яширин файл</h3>
+        <p class="form-hint">Бу файллар репозиторийда мавжуд, лекин сайтда кўрсатилмайди. Тиклаш учун ↩ ни босинг.</p>
         <div class="gallery-admin-grid">${archived.map(f => {
           const isVideo = VIDEO_EXTS.has(f.name.split('.').pop().toLowerCase());
           return `<div class="gallery-admin-item gallery-admin-item--archived">
@@ -670,7 +670,7 @@ async function loadGallery() {
               : `<img src="${thumbUrl(f.name)}" alt="" loading="lazy" onerror="this.style.display='none'">`
             }
             <div class="gallery-admin-label">${esc(f.name)}</div>
-            <button class="btn-restore" onclick="restoreGalleryItem('${esc(f.name)}')" title="Restore to gallery">↩</button>
+            <button class="btn-restore" onclick="restoreGalleryItem('${esc(f.name)}')" title="Галереяга тиклаш">↩</button>
           </div>`;
         }).join('')}</div>
       </div>`;
@@ -678,7 +678,7 @@ async function loadGallery() {
 
     el.innerHTML = html;
   } catch (e) {
-    el.innerHTML = `<p class="error-msg">Error: ${esc(e.message)}</p>`;
+    el.innerHTML = `<p class="error-msg">Хато: ${esc(e.message)}</p>`;
   }
 }
 
@@ -689,7 +689,7 @@ document.getElementById('gallery-upload-form').addEventListener('submit', async 
   if (!file) return;
   const btn = this.querySelector('button[type="submit"]');
   btn.disabled = true;
-  setStatus('gallery-status', 'Uploading…', '');
+  setStatus('gallery-status', 'Юкланмоқда…', '');
 
   try {
     const b64 = await fileToBase64(file);
@@ -706,29 +706,29 @@ document.getElementById('gallery-upload-form').addEventListener('submit', async 
     galleryData.push({ type, file: filename });
     await writeJSON('src/_data/gallery.json', galleryData, sha, `Gallery: add ${filename}`);
 
-    setStatus('gallery-status', '✓ Uploaded! Site rebuilds in ~1 minute.', 'success');
+    setStatus('gallery-status', '✓ Юкланди! Сайт ~1 дақиқа ичида янгиланади.', 'success');
     fileInput.value = '';
     await loadGallery();
   } catch (err) {
-    setStatus('gallery-status', `Error: ${esc(err.message)}`, 'error');
+    setStatus('gallery-status', `Хато: ${esc(err.message)}`, 'error');
   }
   btn.disabled = false;
 });
 
 async function deleteGalleryItem(index) {
-  if (!confirm('Hide this item from the gallery? (File stays in repo and can be restored.)')) return;
+  if (!confirm('Галереядан яшириш? (Файл репозиторийда қолади ва тиклаш мумкин.)')) return;
   try {
     const { content: galleryData, sha } = await readJSON('src/_data/gallery.json');
     galleryData.splice(index, 1);
     await writeJSON('src/_data/gallery.json', galleryData, sha, 'Gallery: hide item');
     await loadGallery();
   } catch (err) {
-    alert(`Error: ${err.message}`);
+    alert(`Хато: ${err.message}`);
   }
 }
 
 async function restoreGalleryItem(filename) {
-  if (!confirm(`Restore "${filename}" to the gallery?`)) return;
+  if (!confirm(`"${filename}" файлини галереяга тиклаш?`)) return;
   try {
     const { content: galleryData, sha } = await readJSON('src/_data/gallery.json');
     const ext = filename.split('.').pop().toLowerCase();
@@ -737,7 +737,7 @@ async function restoreGalleryItem(filename) {
     await writeJSON('src/_data/gallery.json', galleryData, sha, `Gallery: restore ${filename}`);
     await loadGallery();
   } catch (err) {
-    alert(`Error: ${err.message}`);
+    alert(`Хато: ${err.message}`);
   }
 }
 
@@ -747,7 +747,7 @@ async function restoreGalleryItem(filename) {
 
 async function loadTestimonials() {
   const el = document.getElementById('testimonials-list');
-  el.innerHTML = '<p class="loading">Loading…</p>';
+  el.innerHTML = '<p class="loading">Юкланмоқда…</p>';
   try {
     const { content } = await readJSON('src/_data/testimonials.json');
     const items = content.en || [];
@@ -755,7 +755,7 @@ async function loadTestimonials() {
 
     let html = '';
     if (!items.length) {
-      html += '<p class="muted">No testimonials yet.</p>';
+      html += '<p class="muted">Ҳали тавсиялар йўқ.</p>';
     } else {
       html += items.map((t, i) => `
         <div class="list-item">
@@ -765,15 +765,15 @@ async function loadTestimonials() {
             <p class="quote-preview">"${esc(t.quote.substring(0, 100))}${t.quote.length > 100 ? '…' : ''}"</p>
           </div>
           <div class="list-item-actions">
-            <button class="btn-sm btn-danger" onclick="deleteTestimonial(${i})">Archive</button>
+            <button class="btn-sm btn-danger" onclick="deleteTestimonial(${i})">Архивлаш</button>
           </div>
         </div>`).join('');
     }
 
     if (archived.length) {
       html += `<div class="archived-section">
-        <h3 class="archived-title">Archived — ${archived.length} hidden testimonial${archived.length !== 1 ? 's' : ''}</h3>
-        <p class="form-hint">These testimonials are hidden from the site. Press ↩ to restore.</p>
+        <h3 class="archived-title">Архив — ${archived.length} та яширин тавсия</h3>
+        <p class="form-hint">Бу тавсиялар сайтдан яширилган. Тиклаш учун ↩ ни босинг.</p>
         ${archived.map((entry, i) => {
           const t = entry.en || Object.values(entry)[0];
           return `<div class="list-item list-item--archived">
@@ -783,7 +783,7 @@ async function loadTestimonials() {
               <p class="quote-preview">"${esc(t.quote.substring(0, 80))}${t.quote.length > 80 ? '…' : ''}"</p>
             </div>
             <div class="list-item-actions">
-              <button class="btn-sm btn-restore-sm" onclick="restoreTestimonial(${i})">↩ Restore</button>
+              <button class="btn-sm btn-restore-sm" onclick="restoreTestimonial(${i})">↩ Тиклаш</button>
             </div>
           </div>`;
         }).join('')}
@@ -792,7 +792,7 @@ async function loadTestimonials() {
 
     el.innerHTML = html;
   } catch (e) {
-    el.innerHTML = `<p class="error-msg">Error: ${esc(e.message)}</p>`;
+    el.innerHTML = `<p class="error-msg">Хато: ${esc(e.message)}</p>`;
   }
 }
 
@@ -800,12 +800,12 @@ document.getElementById('testimonial-form').addEventListener('submit', async fun
   e.preventDefault();
   const btn = this.querySelector('button[type="submit"]');
   btn.disabled = true;
-  setStatus('testimonial-status', 'Saving…', '');
+  setStatus('testimonial-status', 'Сақланмоқда…', '');
 
   const name = document.getElementById('t-name').value.trim();
   const role = document.getElementById('t-title').value.trim();
   if (!name || !role || !document.getElementById('t-quote-en').value.trim()) {
-    setStatus('testimonial-status', 'Name, title, and English quote are required.', 'error');
+    setStatus('testimonial-status', 'Исм, унвон ва инглизча иқтибос талаб қилинади.', 'error');
     btn.disabled = false;
     return;
   }
@@ -823,18 +823,18 @@ document.getElementById('testimonial-form').addEventListener('submit', async fun
       });
     });
     await writeJSON('src/_data/testimonials.json', testData, sha, `Add testimonial: ${name}`);
-    setStatus('testimonial-status', '✓ Added! Site rebuilds in ~1 minute.', 'success');
+    setStatus('testimonial-status', '✓ Қўшилди! Сайт ~1 дақиқа ичида янгиланади.', 'success');
     this.reset();
     setReady('btn-add-testimonial', 'testimonial-hint', false);
     await loadTestimonials();
   } catch (err) {
-    setStatus('testimonial-status', `Error: ${esc(err.message)}`, 'error');
+    setStatus('testimonial-status', `Хато: ${esc(err.message)}`, 'error');
   }
   btn.disabled = false;
 });
 
 async function deleteTestimonial(index) {
-  if (!confirm('Archive this testimonial? It will be hidden from the site but can be restored.')) return;
+  if (!confirm('Тавсияни архивлаш? У сайтдан яширилади, лекин тиклаш мумкин.')) return;
   try {
     const { content: testData, sha } = await readJSON('src/_data/testimonials.json');
     const entry = {};
@@ -846,12 +846,12 @@ async function deleteTestimonial(index) {
     await writeJSON('src/_data/testimonials.json', testData, sha, 'Archive testimonial');
     await loadTestimonials();
   } catch (err) {
-    alert(`Error: ${err.message}`);
+    alert(`Хато: ${err.message}`);
   }
 }
 
 async function restoreTestimonial(index) {
-  if (!confirm('Restore this testimonial to the site?')) return;
+  if (!confirm('Тавсияни сайтга тиклаш?')) return;
   try {
     const { content: testData, sha } = await readJSON('src/_data/testimonials.json');
     const entry = testData._archived.splice(index, 1)[0];
@@ -862,7 +862,7 @@ async function restoreTestimonial(index) {
     await writeJSON('src/_data/testimonials.json', testData, sha, 'Restore testimonial');
     await loadTestimonials();
   } catch (err) {
-    alert(`Error: ${err.message}`);
+    alert(`Хато: ${err.message}`);
   }
 }
 
