@@ -193,7 +193,7 @@ async function loadBlog() {
         <div class="list-item">
           <div class="list-item-info">
             <strong>${esc(p.title)}</strong>
-            <span class="muted">${esc(p.date)}</span>
+            <span class="meta">${esc(p.date)}</span>
           </div>
           <div class="list-item-actions">
             <a href="https://grant-consulting.uz/en/${esc(p.link)}" target="_blank" class="btn-sm">View ↗</a>
@@ -384,7 +384,7 @@ async function loadEvents() {
         <div class="list-item">
           <div class="list-item-info">
             <strong>${esc(ev.title)}</strong>
-            <span class="muted">${esc(ev.date)} · ${esc(ev.location)}</span>
+            <span class="meta">${esc(ev.date)} · ${esc(ev.location)}</span>
           </div>
           <div class="list-item-actions">
             <button class="btn-sm btn-danger" onclick="deleteEvent(${i})">Delete</button>
@@ -534,7 +534,7 @@ async function loadTestimonials() {
         <div class="list-item">
           <div class="list-item-info">
             <strong>${esc(t.name)}</strong>
-            <span class="muted">${esc(t.title)}</span>
+            <span class="meta">${esc(t.title)}</span>
             <p class="quote-preview">"${esc(t.quote.substring(0, 100))}${t.quote.length > 100 ? '…' : ''}"</p>
           </div>
           <div class="list-item-actions">
