@@ -1,0 +1,8 @@
+# Copy this file to .dev.vars and fill in your values
+# .dev.vars is for local development only — never commit it
+
+DASHBOARD_PASSWORD=your_password_here
+SESSION_SECRET=any_random_32_character_string_here
+GITHUB_PAT=ghp_your_github_token_here
+GITHUB_OWNER=sarvarbeksoporboyev8-debug
+GITHUB_REPO=consulting-website
