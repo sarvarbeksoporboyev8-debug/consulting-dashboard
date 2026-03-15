@@ -623,19 +623,7 @@ document.getElementById('testimonial-form').addEventListener('submit', async fun
     return;
   }
 
-  const avatarFile = document.getElementById('t-avatar').files[0];
-  const avatarFilename = avatarFile ? avatarFile.name.replace(/\s+/g, '-') : '';
-
   try {
-    if (avatarFile) {
-      setStatus('testimonial-status', 'Uploading avatar…', '');
-      const b64 = await fileToBase64(avatarFile);
-      const existingSha = await checkFileSha(`src/img/team/${avatarFilename}`);
-      const putBody = { message: `Avatar: ${avatarFilename}`, content: b64 };
-      if (existingSha) putBody.sha = existingSha;
-      await apiRequest(`src/img/team/${avatarFilename}`, 'PUT', putBody);
-    }
-
     const { content: testData, sha } = await readJSON('src/_data/testimonials.json');
     LANGS.forEach(lang => {
       if (!testData[lang]) testData[lang] = [];
@@ -644,7 +632,7 @@ document.getElementById('testimonial-form').addEventListener('submit', async fun
                document.getElementById('t-quote-en').value.trim(),
         name,
         title: role,
-        avatar: avatarFilename
+        avatar: ''
       });
     });
     await writeJSON('src/_data/testimonials.json', testData, sha, `Add testimonial: ${name}`);
